@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Collection;
+import java.util.Random;
 
 import static org.springframework.data.domain.PageRequest.of;
 
@@ -64,8 +66,10 @@ public class ServerServiceImpl implements ServerService {
         return Boolean.TRUE;
     }
 
-    /* TODO */
+    /* TODO decide if you want to use multiple images or not  */
     private String setServerImageUrl(){
-        return null;
+        String[] imageNames={"server.png","serverOne.png"};
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/server/image/" +
+                imageNames[new Random().nextInt(2)]).toUriString();
     }
 }
