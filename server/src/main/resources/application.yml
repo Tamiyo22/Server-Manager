@@ -1,0 +1,16 @@
+
+spring:
+  datasource:
+    password:
+      url:
+        username:
+  jpa:
+    hibernate:
+      ddl-auto: create
+      properties:
+        hibernate:
+          dialect:
+            format_sql: true
+      show-sql: true
+
+
