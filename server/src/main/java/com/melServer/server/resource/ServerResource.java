@@ -4,20 +4,22 @@ import com.melServer.server.enumeration.Status;
 import com.melServer.server.model.Response;
 import com.melServer.server.model.Server;
 import com.melServer.server.service.implementation.ServerServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.net.ssl.SSLEngineResult;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static javax.security.auth.callback.ConfirmationCallback.OK;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 /**
  * @author Melissa Hargis
@@ -54,6 +56,52 @@ public class ServerResource {
                             .build()
             );
         }
+
+        //post
+    @PostMapping("/save")
+    public ResponseEntity<Response> saveServer(@RequestBody @Valid Server server) {
+//left as ok because I want a response. Created will not send a response to the user.
+        return ResponseEntity.ok(
+                Response.builder().timeStamp(now())
+                        .data(Map.of("server", serverService.create(server)))
+                        .message("Server created")
+                        .status(CREATED)
+                        .statusCode(CREATED.value())
+                        .build()
+        );
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Response> getServer(@PathVariable("id") Long id) throws IOException {
+
+        return ResponseEntity.ok(
+                Response.builder().timeStamp(now())
+                        .data(Map.of("server", serverService.get(id)))
+                        .message("Server Retrieved")
+                        .status(HttpStatus.valueOf(OK))
+                        .statusCode(OK)
+                        .build()
+        );
+    }
+
+    @DeleteMapping ("/delete/{id}")
+    public ResponseEntity<Response> deleteServer(@PathVariable("id") Long id)  {
+
+        return ResponseEntity.ok(
+                Response.builder().timeStamp(now())
+                        .data(Map.of("deleted", serverService.get(id)))
+                        .message("Server Deleted")
+                        .status(HttpStatus.valueOf(OK))
+                        .statusCode(OK)
+                        .build()
+        );
+    }
+
+    @GetMapping(path="/image/{fileName}", produces = IMAGE_PNG_VALUE)
+    public byte[] getServerImage(@PathVariable("fileName") String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get(System.getProperty("user.home")+"Downloads/images/"+ fileName));
+
+    }
 
   }
 
